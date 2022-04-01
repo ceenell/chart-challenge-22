@@ -30,6 +30,7 @@ library(scatterpie)
 
 # NLA 2017 Phytoplankton data 
 # https://www.epa.gov/national-aquatic-resource-surveys/data-national-aquatic-resource-surveys
+# Metadata for phytoplankton data: https://www.epa.gov/sites/default/files/2021-04/nla_2017_phytoplankton_count-metadata.txt
 nla_2017_url <- 'https://www.epa.gov/sites/default/files/2021-04/nla_2017_phytoplankton_count-data.csv'
 phyto_file <- "in/nla_2017_phytoplankton_count-data.csv"
 download.file(nla_2017_url, phyto_file)
@@ -68,9 +69,7 @@ ggplot() +
   geom_sf(data = nla_phyto_sf %>%
             group_by(UID, SITE_ID, ALGAL_GROUP) %>%
             summarize(across(.cols = c(ABUNDANCE:DENSITY), .fns = mean)) %>%
-            filter(ALGAL_GROUP != "",
-                   #ALGAL_GROUP != "YELLOW-GREEN ALGAE"
-                   ),
+            filter(ALGAL_GROUP != ""),
           aes(color = BIOVOLUME), 
           alpha = 0.85) +
   scale_color_viridis(option = "mako", 
@@ -148,23 +147,8 @@ phyto_fa_omega_wide <- phyto_fa_omega %>%
   st_drop_geometry() %>%
   pivot_wider(names_from = omega, values_from = sum_biovol_fa) %>%
   left_join(phyto_fa_omega %>% distinct(geometry, UID, SITE_ID)) %>%
-  st_as_sf()#%>% str
+  st_as_sf()
 phyto_fa_omega_wide
-
-phyto_fa_dia_chloro <- inner_join(x = nla_phyto_agg, 
-                             y = fatty_acids_agg, 
-                             by = c("CLASS" = "Class")) %>%
-  pivot_longer(cols = c(c18.2w6:sumSAFA), 
-               names_to = "fatty_acid", 
-               values_to = "prop") %>%
-  mutate(biovolume_fa = BIOVOLUME * prop) %>%
-  select(-prop) %>%
-  mutate(source = case_when(fatty_acid %in% c("c18.3w3", "c18.4w3") ~ "green",
-                           fatty_acid %in% c("c20.5w3") ~ "diatom")) %>%
-  filter(!is.na(source)) %>%
-  group_by(UID, SITE_ID, source) %>%
-  summarize(sum_biovol_fa = sum(biovolume_fa)) %>%
-  pivot_wider(names_from = source, values_from = sum_biovol_fa)
 
 ## Plot the geom_scatterpies by fatty acid group: Saturated, Monounsaturated, 
 ## Polyunsaturated
@@ -227,10 +211,10 @@ ggplot() +
                       color = omega_3/omega_6),
                   alpha = 0.75, size = 3) +
    scale_color_gradientn(colors = viridis(100)[c(30, 45, 80, 90, 99)], 
-                         name = "Omega-3:Omega6") +
+                         name = "Omega-3:Omega-6") +
    scale_fill_gradientn(colors = viridis(100)[c(30, 45, 80, 90, 99)],
-                        name = "Omega-3:Omega6") +
-  ggtitle("Polyunsaturated Fatty Acids: Saturated Fatty Acids") +
+                        name = "Omega-3:Omega-6") +
+  ggtitle("Essential Fatty Acid Omega-3:Omega-6 Ratios") +
   theme_void(base_size = 16) + 
   theme(legend.position = "right")
 
