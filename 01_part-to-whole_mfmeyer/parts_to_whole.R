@@ -95,7 +95,22 @@ ggplot() +
 
   ))
 
-ggsave('out/phyto_biovol.png', width = 16, height = 9)
+ggsave('out/phyto_biovol.svg', width = 16, height = 9)
+
+# add stacked bar chart?
+total <-nla_phyto_agg %>% 
+  group_by(SITE_ID)%>%
+  summarize(total = sum(BIOVOLUME)) %>%
+  st_drop_geometry()
+cord<-nla_phyto_agg %>% st_coordinates()
+cord$Y
+nla_phyto_agg %>% 
+  bind_cols(cord)%>%
+  #sample_n(300)%>%
+  left_join(total) %>%
+  mutate(percent = BIOVOLUME/total)%>% str
+  ggplot() +
+  geom_bar(stat = 'identity', aes(...9[,2], percent, fill = ALGAL_GROUP))
 
 nla_phyto_agg_wide <- nla_phyto_agg %>%
   ungroup() %>%
@@ -197,7 +212,7 @@ ggplot() +
   theme_void(base_size = 16) + 
   theme(legend.position = "right")
 
-ggsave('out/fatty_acid_pies.png', width = 16, height = 9)
+ggsave('out/fatty_acid_pies.svg', width = 16, height = 9)
 
 ## Remember - not all Polyunsaturated fatty acids are the same! We have 
 ## Omega-3s and Omega-6s, so one way to assess the nutritional content 
@@ -218,4 +233,4 @@ ggplot() +
   theme_void(base_size = 16) + 
   theme(legend.position = "right")
 
-ggsave('out/omega_ratio.png', width = 16, height = 9)
+ggsave('out/omega_ratio.svg', width = 16, height = 9)
