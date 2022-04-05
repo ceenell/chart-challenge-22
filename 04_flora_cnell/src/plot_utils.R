@@ -39,7 +39,7 @@ plot_spring_index <- function(spring_timing, proj, file_out){
 }
 plot_spring_steps <- function(spring_timing, hist_timing, proj, file_out){
   # create stepped histogram
-  # number of cells in each day
+  # using the total area of land with each leaf out day
   anom_hist <- spring_timing %>% 
     group_by(timing_day) %>%
     summarize(n_cells = length(timing), area = sum(area)) %>%
@@ -81,8 +81,9 @@ plot_spring_steps <- function(spring_timing, hist_timing, proj, file_out){
       legend.text = element_blank(),
       legend.title = element_blank(),
       axis.ticks = element_line(color="white"),
-      axis.ticks.y=element_blank(),
-      axis.text.y=element_blank())+
+      #axis.ticks.y=element_blank(),
+      #axis.text.y=element_blank()
+      )+
     scale_color_stepsn(colors = sequential_hcl(10, "TealGrn"),
                        "First leaf date",
                        na.value = NA,
@@ -102,7 +103,7 @@ plot_spring_steps <- function(spring_timing, hist_timing, proj, file_out){
     scale_y_continuous(expand=c(0,0))+
     labs(x='', y='') 
   
-  ggsave(file_out, width = 16, height = 4)
+  ggsave(file_out, width = 18, height = 4)
   return(file_out)
 }
 plot_spring_anomaly <- function(period, spring_anomaly, proj, file_out, color_breaks, n_breaks, color_pal, color_limits){
@@ -193,8 +194,9 @@ plot_anomaly_steps <- function(spring_anomaly, proj, file_out){
       legend.text = element_blank(),
       legend.title = element_blank(),
       axis.ticks = element_line(color="white"),
-      axis.ticks.y=element_blank(),
-      axis.text.y=element_blank())+
+      #axis.ticks.y=element_blank(),
+      #axis.text.y=element_blank()
+      )+
     scale_color_stepsn(colors = pal_colors,
                        na.value = NA,
                        show.limits = TRUE,
@@ -209,6 +211,6 @@ plot_anomaly_steps <- function(spring_anomaly, proj, file_out){
     scale_x_continuous(breaks = c(-28, -21, -14, -7, 0, 7, 14, 21),
                        labels = c(-4, -3, -2, -1, 0, 1, 2, 3))+
     labs(x='', y='')          
-  ggsave(file_out, width = 6, height = 2.5)
+  ggsave(file_out, width = 16, height = 4)
   return(file_out)
 }
