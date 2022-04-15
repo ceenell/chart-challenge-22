@@ -43,7 +43,6 @@ library(rayshader)
 library(maps)
 library(sf)
 library(spData)
-library(plotly)
 
 proj <- "+proj=lcc +lat_1=30.7 +lat_2=29.3 +lat_0=28.5 +lon_0=-91.33333333333333 +x_0=999999.9999898402 +y_0=0 +ellps=GRS80 +datum=NAD83 +to_meter=0.3048006096012192 +no_defs"
 
