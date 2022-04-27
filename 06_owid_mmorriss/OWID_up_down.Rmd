@@ -167,10 +167,10 @@ g <- links_urban %>%
                  nudge_y = -1,
                  color = rep(c("white", NA, NA, NA, NA, NA),
                  length.out = 101))+ #add labels to the nodes, from "names" which idk where that came from in the function calls previously
-  scale_edge_color_manual(values = c("black","lavender", "darkgoldenrod1")) +  #adding gray to major lines, staying green for highlight
-  scale_edge_alpha_manual(values = c(0, .15, 1)) + #set group 3 to only one not transparent
+  #scale_edge_color_manual(values = c("black","lavender", "darkgoldenrod1")) +  #adding gray to major lines, staying green for highlight
+  #scale_edge_alpha_manual(values = c(0, .15, 1)) + #set group 3 to only one not transparent
   labs(title = "Basic access to safe drinking water",
-       subtitle = "<span style = 'color: white;'>Comparing access to safe drinking water in</span> <span style = 'color: darkgoldenrod1;'>Urban</span> <span style = 'color: white;'>and</span> <span style = 'color: darkorchid;'>Rural</span> <span style = 'color: white;'>areas around the world</span>"
+       subtitle = "Percent of a country's population with basic access to safe drinking water\nin <span style = 'color: darkgoldenrod1;'>Urban</span> and <span style = 'color: darkorchid;'>Rural</span> areas"
        ) +
   theme_arc()
 g
@@ -229,6 +229,9 @@ Stitch the two plots together
 
 plot_margin <- 0.025
 
+# legend for line thickness
+
+
 # black bar for bottom of plot
 box_black <- grid::rectGrob(
   x = 0, y = 0, 
@@ -264,7 +267,7 @@ cowplot::ggdraw(xlim = c(0,1),
             height = 1, width = 16,
             hjust = 0, vjust = 1)+
   # creator
-  draw_label("Matthew Morriss, USGS\nData: OWID Water, Sanitation, and Hygiene Data Explorer,WHO/UNICEF Joint Monitoring Program for Water Supply and Sanitation", 
+  draw_label("Matthew Morriss, USGS\nData: OWID Water, Sanitation, and Hygiene Data Explorer, WHO/UNICEF Joint Monitoring Program for Water Supply and Sanitation for 2013", 
              x = 1-plot_margin, 
              y = 0.12, 
              fontface = "italic", 
