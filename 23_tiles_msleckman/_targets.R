@@ -21,6 +21,7 @@ source("3_visualize.R")
 ## Creating sub-folders, especially for placing outputs imgs or tifs in an organized way
 dir.create("1_fetch/out/", showWarnings = FALSE)
 dir.create('1_fetch/out/nlcd/', showWarnings = FALSE)
+dir.create('1_fetch/out/BAU/', showWarnings = FALSE)
 dir.create("2_process/out/", showWarnings = FALSE)
 dir.create('2_process/out/reclassified/', showWarnings = FALSE)
 dir.create('2_process/out/downsampled/', showWarnings = FALSE)
@@ -42,7 +43,10 @@ reclassify_df_nlcd <- read.delim('1_fetch/in/legend_color_map_NLCD.csv', sep = '
 legend_df <- reclassify_df_FOR %>% 
   arrange(Reclassify_match) %>% 
   dplyr::select(-c(FORESCE_value, FORESCE_description, color_name)) %>%
-  distinct()
+  distinct() %>%
+  mutate(lc_label = ifelse(stringr::word(Reclassify_description, 1, 1) == 'Developed', 
+                           gsub('Areas ', '', Reclassify_description),
+                           Reclassify_description))
 
 # Returning the complete list of targets
 c(p1_targets_list, p2_targets_list, p3_targets_list)

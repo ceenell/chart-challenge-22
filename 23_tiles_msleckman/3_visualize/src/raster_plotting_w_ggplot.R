@@ -67,7 +67,7 @@ plot_lc_chart <- function(counts,
     "Land cover"
   ) +
   theme_classic(base_size = 18) +
-   scale_y_continuous(
+  scale_y_continuous(
      breaks = c(0, 1),
      labels = scales::label_percent(accuracy = 1),
      expand = c(0,0)
@@ -94,17 +94,25 @@ compose_lc_frames <- function(lc_map_fp,
   showtext_opts(dpi = 300)
   showtext_auto(enable = TRUE)
 
-  # legend
+  # legend - work here to style more efficiently
+  # causes a warning about having two "fill" scales. ignore it
+  # here scale breaks are reordering the legend key, and where delcared in the 
+  # plot_lc_chart it controls stack order in the bar chart 
   p_legend <- get_legend(lc_chart +
+                           theme(legend.spacing.x=unit(5,'pt'),
+                                 legend.margin = unit(0, "pt"),
+                                 legend.box.background = element_blank()) +
                            # reorder keys 
                            scale_fill_manual(
                              values = legend_df$color_hex,
-                             labels = legend_df$Reclassify_description,
+                             labels = legend_df$lc_label,
                              "Land cover"
                            )+
                            guides(fill=guide_legend(
                              title = '',
-                             label.theme = element_text(family = font_legend, size = 18))))
+                             label.theme = element_text(family = font_legend, size = 16),
+                             keyheight = unit("30", "pt"),
+                             ncol =2)))
   
   # logo
   usgs_logo <- magick::image_read('../logo/usgs_logo_white.png') %>%
@@ -136,8 +144,8 @@ compose_lc_frames <- function(lc_map_fp,
     # draw area chart
     draw_plot(lc_chart + 
                 theme(legend.position = "none",
-                      text = element_text(family = font_legend, size = 18),
-                      axis.text.y = element_text(family = font_legend, size = 18, color = 'black'),
+                      text = element_text(family = font_legend, size = 16),
+                      axis.text.y = element_text(family = font_legend, size = 16, color = 'black'),
                       axis.text.x = element_blank(),
                       axis.ticks.x = element_blank(),
                       axis.line.x = element_blank()),
@@ -153,24 +161,24 @@ compose_lc_frames <- function(lc_map_fp,
     draw_label(title,
                x = plot_margin, y = 1-plot_margin, 
                fontface = "bold", 
-               size = 45, 
+               size = 48, 
                hjust = 0, 
                vjust = 1,
                fontfamily = font_fam,
                lineheight = 1) +
     # add some explanation
-    draw_label('100 Year timeseries based on backcasted data\nfrom X for years #-# and\nNLCD data from fedData for 2001, 2011, and 2019.',
-               x = plot_margin*2, y = 0.9, 
+    draw_label('Reconstructed timeseries made using modeled historical\nlandscapes from the USGS FORE-SCE model (1900-1990) and\nthe National Land Cover Database (2001, 2011, 2019).',
+               x = plot_margin, y = 0.91, 
                size = 18, 
                hjust = 0, 
                vjust = 1,
                fontfamily = font_legend,
-               lineheight = 1.1) +
+               lineheight = 1.05) +
     # add author
-    draw_label("Margaux Sleckman, USGS\nData: USGS National Land Cover Database", 
+    draw_label("Margaux Sleckman, USGS",#\nData: USGS FORE-SCE model and National Land Cover Database", 
                x = 1-plot_margin, y = plot_margin, 
                fontface = "italic", 
-               size = 14, 
+               size = 16, 
                hjust = 1, vjust = 0,
                fontfamily = font_legend,
                lineheight = 1.1) +
