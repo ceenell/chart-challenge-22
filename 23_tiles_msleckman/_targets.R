@@ -27,12 +27,14 @@ dir.create('2_process/out/reclassified/', showWarnings = FALSE)
 dir.create('2_process/out/downsampled/', showWarnings = FALSE)
 dir.create("3_visualize/out/", showWarnings = FALSE)
 dir.create("3_visualize/out/map/", showWarnings = FALSE)
+dir.create("3_visualize/out/map_future/", showWarnings = FALSE)
 dir.create("3_visualize/out/frames/", showWarnings = FALSE)
+dir.create("3_visualize/out/frames_future/", showWarnings = FALSE)
 dir.create("3_visualize/out/gifs/", showWarnings = FALSE)
 
 ## all years of interest for this visual
 all_years <- c('1900','1910','1920','1930','1940','1950',
-               '1960','1970','1980','1990','2000','2001','2011','2019'
+               '1960','1970','1980','1990','2000','2001','2010', '2011','2019', '2020'
                )
 
 # defining the zreclassify dfs for nlcd and FORESCE since the land cover classification is different  

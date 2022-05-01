@@ -18,13 +18,13 @@ p2_targets_list<- list(
   ## reclassification for the FORESCE backcasting tif files. This needs cropping to the correct polygon boundary
   tar_target(
     p2_write_reclassified_rasters_FOR,
-    read_in_reclassify(lc_tif_path = p1_FORESCE_lc_tif_download_filtered,
+    read_in_reclassify(lc_tif_path = p1_FORESCE_lc_tif_filtered,
                        reclassify_legend = reclassify_df_FOR,
                        value_cols = c('FORESCE_value','Reclassify_match'),
                        aoi_for_crop = p1_drb_boundary,
                        legend_file_sep = ',',
                        out_folder = '2_process/out/reclassified/'),
-    pattern = map(p1_FORESCE_lc_tif_download_filtered),
+    pattern = map(p1_FORESCE_lc_tif_filtered),
     format = 'file'
   ),
   ## Do same for NLCD rasters
@@ -56,7 +56,19 @@ p2_targets_list<- list(
     },
     pattern = map(p2_reclassified_raster_list)
   ),
-  
+  # USing only FORESCE data
+  tar_target(
+    p2_lc_df_list_FOR,
+    {
+      year <- str_sub(p2_write_reclassified_rasters_FOR, -8, -5)
+      as.data.frame(rast(p2_write_reclassified_rasters_FOR), xy = TRUE) %>%
+        rowid_to_column('cell_id') %>% 
+        rename(lc = 4) %>% # 4th col are raster values
+        mutate(year = year)
+    },
+    pattern = map(p2_write_reclassified_rasters_FOR)
+  ),
+
   # Look at area change in land cover through time
   ## Count the number of cells for each category 
   tar_target(
@@ -67,11 +79,31 @@ p2_targets_list<- list(
       drop_na(),
     pattern = map(p2_reclassified_raster_list)
   ),
+  #future
+  tar_target(
+    p2_raster_cell_count_FOR,
+    terra::freq(rast(p2_write_reclassified_rasters_FOR)) %>% 
+      as_tibble() %>% 
+      mutate(year = str_sub(names(rast(p2_write_reclassified_rasters_FOR)), -4, -1)) %>%
+      drop_na(),
+    pattern = map(p2_write_reclassified_rasters_FOR)
+  ),
   tar_target(
     p2_count_ordered,
     p2_raster_cell_count %>% 
       # find % of total area in each category over time
       left_join(p2_raster_cell_count %>% 
+                  group_by(year)%>%
+                  summarize(total_cells = sum(count))) %>%
+      mutate(percent = count/total_cells) %>%
+      # order lc by mean % area to stack bars
+      mutate(lc_order = forcats::fct_reorder(factor(value), percent, .fun = mean))
+  ),
+  tar_target(
+    p2_count_ordered_FOR,
+    p2_raster_cell_count_FOR %>% 
+      # find % of total area in each category over time
+      left_join(p2_raster_cell_count_FOR %>% 
                   group_by(year)%>%
                   summarize(total_cells = sum(count))) %>%
       mutate(percent = count/total_cells) %>%
@@ -86,7 +118,7 @@ p2_targets_list<- list(
   ),
   tar_target(
     p2_long_sankey,
-    p2_diff %>% ggsankey::make_long('1900','1910','1920','1930','1940','1950','1960','1970','1980','1990','2001','2011','2019')
+    p2_diff %>% ggsankey::make_long('1900','1910','1920','1930','1940','1950','1960','1970','1980','1990','2000','2010','2020')
   ),
   tar_target(
     p2_bump_df, 

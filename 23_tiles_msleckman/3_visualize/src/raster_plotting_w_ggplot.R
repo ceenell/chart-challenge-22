@@ -85,6 +85,7 @@ compose_lc_frames <- function(lc_map_fp,
                               frame_year,
                               font_fam = "Dongle",
                               out_folder, title,
+                              sub_text,
                               legend_df){
   
   # import fonts
@@ -149,11 +150,11 @@ compose_lc_frames <- function(lc_map_fp,
                       axis.text.x = element_blank(),
                       axis.ticks.x = element_blank(),
                       axis.line.x = element_blank()),
-              y = 0.1, x = plot_margin*2,
-              height = 0.45, width = 0.5) +
+              y = 0.1, x = plot_margin/2,
+              height = 0.45, width = 0.55) +
     # draw legend
     draw_plot(p_legend,
-              y = 0.875, x = plot_margin*2, 
+              y = 0.89, x = plot_margin, 
               width = 0.5, height = 0.35,
               hjust = 0, vjust = 1,
               halign = 0, valign = 1) +
@@ -167,7 +168,7 @@ compose_lc_frames <- function(lc_map_fp,
                fontfamily = font_fam,
                lineheight = 1) +
     # add some explanation
-    draw_label('Reconstructed timeseries made using modeled historical\nlandscapes from the USGS FORE-SCE model (1900-1990) and\nthe National Land Cover Database (2001, 2011, 2019).',
+    draw_label(sub_text,
                x = plot_margin, y = 0.91, 
                size = 18, 
                hjust = 0, 

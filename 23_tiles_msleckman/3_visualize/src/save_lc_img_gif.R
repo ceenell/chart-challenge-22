@@ -11,7 +11,7 @@ animate_frames_gif <- function(frames, out_file, reduce = TRUE, frame_delay_cs, 
     image_read() %>%
     image_join() %>%
     image_animate(
-      delay = c(rep(frame_delay_cs,length(frames))),
+      delay = c(frame_delay_cs*4, rep(frame_delay_cs, (length(frames)-1))),
       optimize = TRUE
     ) %>%
     image_write(out_file)
@@ -25,7 +25,7 @@ animate_frames_gif <- function(frames, out_file, reduce = TRUE, frame_delay_cs, 
 
 optimize_gif <- function(out_file, frame_delay_cs) {
   # simplify the gif with gifsicle - cuts size by about 2/3
-  gifsicle_command <- sprintf('gifsicle -b -O3 -d %s --colors 256 %s', frame_delay_cs, out_file)
+  gifsicle_command <- sprintf('gifsicle -b -O3 -d %s --colors 256 %s', frame_delay_cs*5, out_file)
   system(gifsicle_command)
   
   return(out_file)
