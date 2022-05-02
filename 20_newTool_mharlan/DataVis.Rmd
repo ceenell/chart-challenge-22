@@ -280,7 +280,8 @@ order_timeline = ggplot(order_long,
   scale_x_continuous(
     breaks = seq(1950, 2020, by = 10)
   )+
-  guides(color=guide_legend("Stream order"))+
+  guides(color=guide_legend("Stream order"),
+         linetype = FALSE)+
   theme(legend.position="bottom",
         panel.background = element_rect(color = NA))
 
